@@ -75,16 +75,6 @@ export default {
                     icon: 'el-icon-lx-cascades',
                     index: 'userTable',
                     title: '用户表格'
-                },
-                {
-                    icon: 'el-icon-lx-copy',
-                    index: 'tabs',
-                    title: 'tab选项卡'
-                },
-                {
-                    icon: 'el-icon-pie-chart',
-                    index: 'charts',
-                    title: 'schart图表'
                 }
             ]
         };

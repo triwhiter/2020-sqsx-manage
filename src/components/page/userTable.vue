@@ -34,8 +34,8 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="intro" label="产品名称"></el-table-column>
-                <el-table-column prop="sexual" label="价格">
+                <el-table-column prop="nickName" label="名称"></el-table-column>
+                <el-table-column prop="sexual" label="性别">
                     <template slot-scope="scope">{{scope.row.sex}}</template>
                 </el-table-column>
                 <el-table-column prop="avatar" label="头像" align="center">

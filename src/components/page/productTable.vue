@@ -34,7 +34,7 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="productId" label="ID" width="85" align="center"></el-table-column>
-                <el-table-column prop="intro" label="产品名称"></el-table-column>
+                <el-table-column prop="intro" label="产品名称" ></el-table-column>
                 <el-table-column prop="price" label="原价">
                     <template slot-scope="scope">{{scope.row.price}}</template>
                 </el-table-column>
@@ -208,12 +208,12 @@ export default {
         // 触发搜索按钮
         handleSearch() {
             const _this=this
-            this.$http.get("/admin/selectMusic/" + _this.query.name + '/' +_this.query.pageIndex+"/"+_this.query.pageSize)
+            this.$http.get("/products/search/"+_this.query.name+"/"+_this.query.pageIndex+"/"+_this.query.pageSize+"/0")
                 .then(response => {
                     if(response.data){
-                        console.log(response.data.records);
+                        console.log(response);
                         this.tableData = [];
-                        this.tableData = response.data.records;
+                        this.tableData = response.data.data.list;
                     }
                 })
                 .catch(error => {
