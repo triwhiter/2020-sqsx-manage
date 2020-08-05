@@ -34,8 +34,8 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="nickName" label="昵称"></el-table-column>
-                <el-table-column prop="sexual" label="性别">
+                <el-table-column prop="intro" label="产品名称"></el-table-column>
+                <el-table-column prop="sexual" label="价格">
                     <template slot-scope="scope">{{scope.row.sex}}</template>
                 </el-table-column>
                 <el-table-column prop="avatar" label="头像" align="center">
@@ -162,6 +162,7 @@ export default {
     name: 'basetable',
     data() {
         return {
+            beforeImg: 'http://img14.360buyimg.com/n5/',
             query: {
                 address: '',
                 name: '',
@@ -204,7 +205,7 @@ export default {
         // 触发搜索按钮
         handleSearch() {
             const _this=this
-            axios.get("http://localhost:8083/admin/selectMusic/" + _this.query.name + '/' +_this.query.pageIndex+"/"+_this.query.pageSize)
+            this.$http.get("/admin/selectMusic/" + _this.query.name + '/' +_this.query.pageIndex+"/"+_this.query.pageSize)
                 .then(response => {
                     if(response.data){
                         console.log(response.data.records);
@@ -225,7 +226,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    axios.delete("http://localhost:8088/api/user/del/"+id);
+                    this.$http.delete("/user/del/"+id);
                     this.$message.success('删除成功');
                     this.tableData.splice(index, 1);
                 })
@@ -253,7 +254,7 @@ export default {
         },
         // 保存编辑
         saveEdit() {
-            axios.put("http://localhost:8088/api/user/editUser",this.editForm)
+            this.$http.put("/user/editUser",this.editForm)
             this.editVisible = false;
             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
             this.$set(this.tableData, this.idx, this.form);
@@ -264,7 +265,7 @@ export default {
         },
         // 保存添加
         saveAdd() {
-            axios.post("http://localhost:8088/api/user/addUser",this.addForm)
+            this.$http.post("/user/addUser",this.addForm)
             this.addVisible = false;
             this.$message.success(`添加成功`);
             this.$set(this.tableData, this.idx, this.addForm);
