@@ -214,7 +214,7 @@ export default {
                 })
                 .catch(error => {
                     console.log(error.message);
-                    alert(error.message);
+                    // alert(error.message);
                 })
             this.$set(this.query, 'pageIndex', 1);
         },
