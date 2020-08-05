@@ -112,7 +112,9 @@
                 <el-form-item label="邮箱">
                     <el-input v-model="editForm.email"></el-input>
                 </el-form-item>
-
+                <el-form-item label="密码">
+                    <el-input v-model="editForm.password"></el-input>
+                </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -141,6 +143,9 @@
                 </el-form-item>
                 <el-form-item label="邮箱">
                     <el-input v-model="addForm.email"></el-input>
+                </el-form-item>
+                <el-form-item label="密码">
+                    <el-input v-model="addForm.password"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -198,8 +203,20 @@ export default {
         },
         // 触发搜索按钮
         handleSearch() {
+            const _this=this
+            axios.get("http://localhost:8083/admin/selectMusic/" + _this.query.name + '/' +_this.query.pageIndex+"/"+_this.query.pageSize)
+                .then(response => {
+                    if(response.data){
+                        console.log(response.data.records);
+                        this.tableData = [];
+                        this.tableData = response.data.records;
+                    }
+                })
+                .catch(error => {
+                    console.log(error.message);
+                    alert(error.message);
+                })
             this.$set(this.query, 'pageIndex', 1);
-            this.getData();
         },
         // 删除操作
         handleDelete(index, id) {
@@ -208,7 +225,7 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    axios.delete("http://localhost:8088/api/user/del/"+id)
+                    axios.delete("http://localhost:8088/api/user/del/"+id);
                     this.$message.success('删除成功');
                     this.tableData.splice(index, 1);
                 })
@@ -247,6 +264,7 @@ export default {
         },
         // 保存添加
         saveAdd() {
+            axios.post("http://localhost:8088/api/user/addUser",this.addForm)
             this.addVisible = false;
             this.$message.success(`添加成功`);
             this.$set(this.tableData, this.idx, this.addForm);
