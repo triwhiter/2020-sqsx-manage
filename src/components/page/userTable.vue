@@ -187,7 +187,7 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             const _this=this
-            axios.get("http://localhost:8088/api/user/getAllUserInfo/"+_this.query.pageIndex+"/"+_this.query.pageSize)
+            this.$http.get("/user/getAllUserInfo/"+_this.query.pageIndex+"/"+_this.query.pageSize)
                 .then(response => {
                     if(response.data){
                         console.log(response.data);
