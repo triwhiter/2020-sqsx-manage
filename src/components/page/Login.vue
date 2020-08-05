@@ -45,9 +45,10 @@ export default {
         submitForm() {
             this.$refs.login.validate(valid => {
                 if (valid) {
-                    this.$http.post('/admin/login', this.param)
+                    this.$http.post('/login', this.param)
 					.then(resp => {
 						let res = resp.data;
+						console.log(resp);
 						if(res.code == 200) {
 							this.$message.success(res.msg);						
 							sessionStorage.setItem('ms_username', JSON.stringify(res.data));

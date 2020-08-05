@@ -254,7 +254,6 @@
                     })
                     .catch(error => {
                         console.log(error.message);
-                        alert(error.message);
                     })
                 this.idx = index;
                 this.editForm = row;

@@ -40,12 +40,11 @@
                 </el-table-column>
                 <el-table-column prop="avatar" label="头像" align="center">
                     <template slot-scope="scope">
-<!--                        <el-image-->
-<!--                            class="table-td-thumb"-->
-<!--                            :src="beforeImg+scope.row.avatar"-->
-<!--                            :preview-src-list="[scope.row.avatar]"-->
-<!--                        ></el-image>-->
-                        <img :src="scope.row.avatar+'' +'?'+scope.row.sex+'&'+scope.row.id" class="table-td-thumb">
+                      <el-image
+                           class="table-td-thumb"
+                           :src="scope.row.avatar"
+                           :preview-src-list="[scope.row.avatar]"
+                       ></el-image>
                     </template>
                 </el-table-column>
                 <el-table-column prop="level" label="会员等级">
