@@ -21,7 +21,7 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm()">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : 用户名和密码随便填。</p>
+                <p class="login-tips">Tips : 请使用分配的账号密码登陆。</p>
             </el-form>
         </div>
     </div>
@@ -32,8 +32,8 @@ export default {
     data: function() {
         return {
             param: {
-                username: 'admin',
-                password: '123123',
+                username: '',
+                password: '',
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -45,9 +45,18 @@ export default {
         submitForm() {
             this.$refs.login.validate(valid => {
                 if (valid) {
-                    
-                    localStorage.setItem('ms_username', this.param.username);
-                    this.$router.push('/');
+                    this.$http.post('/login', this.param)
+					.then(resp => {
+						let res = resp.data;
+						console.log(resp);
+						if(res.code == 200) {
+							this.$message.success(res.msg);						
+							sessionStorage.setItem('ms_username', JSON.stringify(res.data));
+							this.$router.push('/');
+						} else {
+							this.$message.error(res.msg);
+						}						
+					});
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
