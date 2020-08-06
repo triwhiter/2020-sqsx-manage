@@ -4,7 +4,7 @@
             <div class="ms-title">后台管理系统</div>
             <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="param.username" placeholder="username">
+                    <el-input v-model="param.username" placeholder="phonenum">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
@@ -36,7 +36,13 @@ export default {
                 password: '',
             },
             rules: {
-                username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+                username: [
+					{ required: true, message: '请输入电话号码', trigger: 'blur' },
+					{
+					  pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
+					  message: "请输入正确的电话号码",
+					  trigger: "blur"
+					}],
                 password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
             },
         };

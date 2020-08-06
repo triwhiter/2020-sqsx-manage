@@ -34,7 +34,7 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="昵称"></el-table-column>
+                <el-table-column prop="user_name" label="下单姓名"></el-table-column>
 				<el-table-column prop="amount" label="总价格"></el-table-column>
 <!--                <el-table-column prop="actor" label="歌手名称">
                     <template slot-scope="scope">{{scope.row.player}}</template>
@@ -49,21 +49,21 @@
                     </template>
                 </el-table-column> -->
                 <el-table-column prop="area" label="收获地址"></el-table-column>
-                <el-table-column label="资源状态" align="center">
+                <el-table-column label="审核状态" align="center">
                     <template slot-scope="scope">
                         <el-tag
                         :type="scope.row.status==='已审核'?'success':(scope.row.status==='未审核'?'danger':'')"
                         >{{scope.row.status}}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="phone" label="联系方式"></el-table-column>
-                <el-table-column prop="createTime" label="下单时间"></el-table-column>
+                <el-table-column prop="phone_number" label="联系方式"></el-table-column>
+                <el-table-column prop="create_time" label="下单时间"></el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-tooltip class="item" effect="light" open-delay="500" content="审核订单" placement="bottom" :enterable="false">
                     <el-button type="primary" size="mini" icon="el-icon-edit"
                     circle
-                    @click="checkOrderById(scope.row.orderId)"></el-button>
+                    @click="checkOrderById(scope.row.id)"></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="light" open-delay="500" content="查看明细" placement="bottom" :enterable="false">
                     <el-button
@@ -71,7 +71,7 @@
                       size="mini"
                       icon="el-icon-location"
                       circle
-                      @click="showOrderDetailById(scope.row.orderId)"
+                      @click="showOrderDetailById(scope.row.id)"
                     ></el-button>
                     </el-tooltip>
                     <el-tooltip class="item" effect="light" open-delay="500" content="删除订单" placement="bottom" :enterable="false">
@@ -80,7 +80,7 @@
                       icon="el-icon-delete"
                       size="mini"
                       circle
-                      @click="removeOrderById(scope.row.orderId)"
+                      @click="removeOrderById(scope.row.id)"
                     ></el-button>
                     </el-tooltip>
                   </template>
@@ -98,38 +98,39 @@
             </div>
         </div>
 
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="editForm" label-width="70px">
-                <el-form-item label="ID">
-                    <el-input v-model="editForm.id"></el-input>
-                </el-form-item>
-                <el-form-item label="音乐">
-                    <el-input v-model="editForm.name"></el-input>
-                </el-form-item>
-                <el-form-item label="歌手">
-                    <el-input v-model="editForm.player"></el-input>
-                </el-form-item>
-                <el-form-item label="海报">
-                    <el-input v-model="editForm.poster"></el-input>
-                </el-form-item>
-                <el-form-item label="音乐介绍">
-                    <el-input v-model="editForm.profile"></el-input>
-                </el-form-item>
-                <el-form-item label="上线状态">
-                    <el-input v-model="editForm.status"></el-input>
-                </el-form-item>
-                <el-form-item label="发布时间">
-                    <el-input v-model="editForm.releaseDate"></el-input>
-                </el-form-item>
-                <el-form-item label="类别">
-                    <el-input v-model="editForm.classId"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
+        <!-- 展示物订单详情对话框 -->
+        <el-dialog title="查看订单详情" :visible.sync="detailVisible" width="50%">
+        <!-- 订单详情 -->
+        <template>
+        <el-table
+            :data="detailData"
+            height="250"
+            border
+            style="width: 100%">
+            <el-table-column
+              label="图片"
+              align="center"
+            >
+            <template slot-scope="scope">
+              <img :src="beforeImg + scope.row.img_url" width="50" height="50" />
+            </template>
+            </el-table-column>
+            <el-table-column
+              prop="name"
+              label="食品名"
+              width="300">
+            </el-table-column>
+            <el-table-column
+              prop="promote_price"
+              label="单价 (单位:元)"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="number"
+              label="购买数量">
+            </el-table-column>
+          </el-table>
+          </template>
         </el-dialog>
     </div>
 </template>
@@ -146,15 +147,15 @@
                     pageSize: 4
                 },
                 tableData: [],
-                multipleSelection: [],
+                detailData: [],
                 delList: [],
-                editVisible: false,
-                addVisible :false,
+				detailVisible: false,
                 pageTotal: 12,
                 addForm: {},
                 editForm: {},
                 idx: -1,
-                id: -1
+                id: -1,
+				beforeImg: "http://img14.360buyimg.com/n5/",
             };
         },
         created() {
@@ -166,12 +167,13 @@
                 const _this=this
                 this.$http.get("/orderList/getAllOrderInfo/"+_this.query.pageIndex+"/"+_this.query.pageSize)
                     .then(response => {
+						// console.log(response);
 						let res = response.data;
 						console.log(res);
                         if(res.code == 200){
                             this.tableData = [];
-                            this.tableData = res.data.records;
-							this.pageTotal = res.data.total;
+                            this.tableData = res.data;
+							this.pageTotal = res.data[0].total;
                         } else {
 							this.$message.error(res.msg);
 						}
@@ -222,42 +224,58 @@
                 this.multipleSelection = [];
             },
             // 审核订单
-            checkOrderById(index, row ,id) {
-                axios.get("http://localhost:8083/admin/getMusicOne/"+id)
-                    .then(response => {
-                        if(response.data){
-                            console.log(response.data);
-                            this.editForm = [];
-                            this.editForm = response.data;
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error.message);
-                        alert(error.message);
-                    })
-                this.idx = index;
-                this.editForm = row;
-                this.editVisible = true;
+            checkOrderById(id) {
+				this.$confirm('确定审核？', '提示', {
+					type: 'warning'
+				})
+				.then(() => {
+				this.$http.put("/orderList/updateStatusById/"+ id)
+					.then(resp => {
+						let res = resp.data;
+						if(res.code == 200) {
+							this.getData();
+							this.$message.success(res.msg);
+						} else {
+							this.$message.error(res.msg);
+						}
+					});
+					});
             },
-            // 保存编辑
-            saveEdit() {
-                axios.post("http://localhost:8083/admin/updateMusic/",this.editForm)
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                this.$set(this.tableData, this.idx, this.editForm);
-            },
-            // 添加操作
-            handleAdd() {
-                this.addVisible = true;
-            },
-            // 保存添加
-            saveAdd() {
-                axios.post("http://localhost:8083/admin/addMusic/",this.addForm)
-                this.addVisible = false;
-                this.$message.success(`添加成功`);
-                this.$set(this.tableData, this.idx, this.form);
-            },
-            // 分页导航
+			//展示订单详情
+            showOrderDetailById (id) {
+				this.detailVisible = true;
+				this.$http
+				.get('/orderList/getProductInfoById/' + id)
+				.then(resp => {
+					let res = resp.data;
+					console.log(res);
+					if(res.code == 200) {
+						this.detailData = res.data;
+					} else {
+						this.$message.error(res.msg);
+					}
+				});
+			},
+			removeOrderById (id) {
+				this.$confirm('确定要删除吗？','提示', {
+					type: Error
+				})
+				.then(() => {
+					//删除订单
+					this.$http
+					.delete('/orderList/delOrder/'+ id)
+					.then(resp => {
+						let res = resp.data;
+						console.log(res);
+						if(res.code == 200) {
+							this.getData();
+							this.$message.success(res.msg);
+						} else {
+							this.$message.error(res.msg);
+						}
+					})
+				});
+			},
             handlePageChange(val) {
                 this.$set(this.query, 'pageIndex', val);
                 this.getData();
