@@ -33,19 +33,19 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="productId" label="ID" width="85" align="center"></el-table-column>
-                <el-table-column prop="intro" label="产品名称" width="270">
+                <el-table-column prop="id" label="ID" width="85" align="center"></el-table-column>
+                <el-table-column prop="name" label="产品名称" width="270">
 					<template slot-scope="scope">
-						<span v-html="scope.row.intro"></span>
+						<span v-html="scope.row.name"></span>
 					</template>
 				</el-table-column>
-                <el-table-column prop="price" label="原价">
-                    <template slot-scope="scope">{{scope.row.price}}</template>
+                <el-table-column prop="original_price" label="原价">
+                    <template slot-scope="scope">{{scope.row.original_price}}</template>
                 </el-table-column>
-                <el-table-column prop="promotePrice" label="优惠价">
-                    <template slot-scope="scope">{{scope.row.promotePrice}}</template>
+                <el-table-column prop="promote_price" label="优惠价">
+                    <template slot-scope="scope">{{scope.row.promote_price}}</template>
                 </el-table-column>
-                <el-table-column prop="imgUrl" label="封面" align="center">
+<!--                <el-table-column prop="imgUrl" label="封面" align="center">
                     <template slot-scope="scope">
                        <el-image
                            class="table-td-thumb"
@@ -54,19 +54,19 @@
                            :preview-src-list="[scope.row.imgUrl[0]]"
                        ></el-image>
                     </template>
-                </el-table-column>
-                <el-table-column prop="shopName" label="店名" width="120">
+                </el-table-column> -->
+                <el-table-column prop="store" label="店名" width="120">
                     <template slot-scope="scope">
-						<span v-html="scope.row.shopName"></span>
+						<span v-html="scope.row.store"></span>
 					</template>
                 </el-table-column>
-                <el-table-column prop="userName" label="销量">
-                    <template slot-scope="scope">{{scope.row.saleNum}}</template>
+                <el-table-column prop="sale_num" label="销量">
+                    <template slot-scope="scope">{{scope.row.sale_num}}</template>
                 </el-table-column>
-                <el-table-column prop="collectNum" label="评论数">
-                    <template slot-scope="scope">{{scope.row.collectNum}}</template>
+                <el-table-column prop="collect_num" label="评论数">
+                    <template slot-scope="scope">{{scope.row.collect_num}}</template>
                 </el-table-column>
-                <el-table-column prop="email" label="库存量">
+                <el-table-column prop="stock" label="库存量">
                     <template slot-scope="scope">{{scope.row.stock}}</template>
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -139,8 +139,8 @@ export default {
 					let res = response.data;
 					if(res.code == 200) {
 						console.log(response);
-						this.tableData = res.data.list;
-						this.pageTotal = res.data.total;
+						this.tableData = res.data;
+						this.pageTotal = res.data[0].total;
 						this.$message.success(res.msg);
 					} else {
 						this.$message.error(res.msg);
@@ -154,16 +154,17 @@ export default {
             this.getData();
         },
         // 删除操作
-        handleDelete(index, id) {
+        handleDelete(id) {
             // 二次确认删除
             this.$confirm('确定要从回收站删除，删除之后不能恢复？', '提示', {
                 type: 'warning'
             })
                 .then(() => {
                     this.$http
-					.delete()
+					.delete('/products/del/' + id)
 					.then(resp => {
 						let res = resp.data;
+						console.log(resp);
 						if(res.code == 200) {
 							this.getData();
 						} else {
