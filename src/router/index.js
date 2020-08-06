@@ -34,6 +34,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/productTable.vue'),
                     meta: { title: '商品表格' }
                 },
+				{
+				    path: '/rubbish',
+				    component: () => import(/* webpackChunkName: "table" */ '../components/page/Rubbish.vue'),
+				    meta: { title: '回收站' }
+				},
                 {
                     path: '/userTable',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/userTable.vue'),

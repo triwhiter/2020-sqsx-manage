@@ -179,36 +179,6 @@
 						}
                     });
             },
-            // 触发搜索按钮
-            handleSearch() {
-                const _this=this
-                axios.get("http://localhost:8083/admin/selectMusic/" + _this.query.name + '/' +_this.query.pageIndex+"/"+_this.query.pageSize)
-                    .then(response => {
-                        if(response.data){
-                            console.log(response.data.records);
-                            this.tableData = [];
-                            this.tableData = response.data.records;
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error.message);
-                        alert(error.message);
-                    })
-                this.$set(this.query, 'pageIndex', 1);
-            },
-            // 删除操作
-            handleDelete(index, id) {
-                // 二次确认删除
-                this.$confirm('确定要删除吗？', '提示', {
-                    type: 'warning'
-                })
-                    .then(() => {
-                        axios.get("http://localhost:8083/admin/deleteMusic/"+id)
-                        this.$message.success('删除成功');
-                        this.tableData.splice(index, 1);
-                    })
-                    .catch(() => {});
-            },
             // 多选操作
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -256,6 +226,7 @@
 					}
 				});
 			},
+			//删除订单
 			removeOrderById (id) {
 				this.$confirm('确定要删除吗？','提示', {
 					type: Error

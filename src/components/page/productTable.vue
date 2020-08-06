@@ -226,11 +226,10 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$http.delete("/user/del/"+id);
+                    this.$http.delete("/products/delById/"+id);
                     this.$message.success('删除成功');
                     this.tableData.splice(index, 1);
                 })
-                .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
