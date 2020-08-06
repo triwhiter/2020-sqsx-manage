@@ -141,7 +141,7 @@ export default {
 						console.log(response);
 						this.tableData = res.data;
 						this.pageTotal = res.data[0].total;
-						this.$message.success(res.msg);
+						// this.$message.success(res.msg);
 					} else {
 						this.$message.error(res.msg);
 					}
@@ -176,16 +176,32 @@ export default {
         // 多选操作
         handleSelectionChange(val) {
             this.multipleSelection = val;
+			console.log(val);
         },
+		deleteById(id){
+			this.$http
+			.delete('/products/del/' + id)
+			.then(resp => {
+				let res = resp.data;
+				console.log(resp);
+				if(res.code == 200) {
+					this.getData();
+				} else {
+					this.$message.error(res.msg);
+				}
+			});
+		},
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+			this.$confirm('确定要从回收站删除，删除之后不能恢复？','提示',{
+				type: 'warning'
+			}).then(() => {
+			this.multipleSelection.forEach(item =>{
+				this.deleteById(item.id);
+			})
+			this.$message.success('删除了'+this.multipleSelection.length+'行数据');
+			this.getData();
+			this.multipleSelection = [];	
+			}) 
         },
         // 分页导航
         handlePageChange(val) {
