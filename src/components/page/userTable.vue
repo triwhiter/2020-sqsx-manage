@@ -240,6 +240,7 @@ export default {
             let str = '';
             this.delList = this.delList.concat(this.multipleSelection);
             for (let i = 0; i < length; i++) {
+                this.$http.delete("/user/del/"+this.multipleSelection[i].id);
                 str += this.multipleSelection[i].name + ' ';
             }
             this.$message.error(`删除了${str}`);

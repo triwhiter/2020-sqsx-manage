@@ -80,7 +80,7 @@
                             type="text"
                             icon="el-icon-delete"
                             class="red"
-                            @click="handleDelete(scope.$index, scope.row.id)"
+                            @click="handleDelete(scope.$index, scope.row.productId)"
                         >删除</el-button>
                     </template>
                 </el-table-column>
@@ -227,6 +227,7 @@ export default {
             })
                 .then(() => {
                     this.$http.delete("/products/delById/"+id);
+                    console.log(id);
                     this.$message.success('删除成功');
                     this.tableData.splice(index, 1);
                 })
@@ -240,7 +241,8 @@ export default {
             let str = '';
             this.delList = this.delList.concat(this.multipleSelection);
             for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
+                this.$http.delete("/products/delById/"+this.multipleSelection[i].productId);
+                str += this.multipleSelection[i].intro + ' ';
             }
             this.$message.error(`删除了${str}`);
             this.multipleSelection = [];
