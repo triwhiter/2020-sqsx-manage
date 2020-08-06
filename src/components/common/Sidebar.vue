@@ -10,41 +10,22 @@
             unique-opened
             router
         >
-            <template v-for="item in items">
-                <template v-if="item.subs">
-                    <el-submenu :index="item.index" :key="item.index">
-                        <template slot="title">
-                            <i :class="item.icon"></i>
-                            <span slot="title">{{ item.title }}</span>
-                        </template>
-                        <template v-for="subItem in item.subs">
-                            <el-submenu
-                                v-if="subItem.subs"
-                                :index="subItem.index"
-                                :key="subItem.index"
-                            >
-                                <template slot="title">{{ subItem.title }}</template>
-                                <el-menu-item
-                                    v-for="(threeItem,i) in subItem.subs"
-                                    :key="i"
-                                    :index="threeItem.index"
-                                >{{ threeItem.title }}</el-menu-item>
-                            </el-submenu>
-                            <el-menu-item
-                                v-else
-                                :index="subItem.index"
-                                :key="subItem.index"
-                            >{{ subItem.title }}</el-menu-item>
-                        </template>
-                    </el-submenu>
-                </template>
-                <template v-else>
-                    <el-menu-item :index="item.index" :key="item.index">
-                        <i :class="item.icon"></i>
-                        <span slot="title">{{ item.title }}</span>
-                    </el-menu-item>
-                </template>
-            </template>
+		<template v-if="user.isSadmin">
+			<template v-for="item in items" >
+				<el-menu-item :index="item.index" :key="item.index">
+					<i :class="item.icon"></i>
+					<span slot="title">{{ item.title }}</span>
+				</el-menu-item>
+			</template>	
+		</template>
+		<template v-else>
+			<template v-for="item in itemss" >
+				<el-menu-item :index="item.index" :key="item.index">
+					<i :class="item.icon"></i>
+					<span slot="title">{{ item.title }}</span>
+				</el-menu-item>
+			</template>	
+		</template>
         </el-menu>
     </div>
 </template>
@@ -55,6 +36,7 @@ export default {
     data() {
         return {
             collapse: false,
+			user: [],
             items: [
                 {
                     icon: 'el-icon-lx-home',
@@ -81,7 +63,29 @@ export default {
                     index: 'rubbish',
                     title: '回收站'
                 }
-            ]
+            ],
+			itemss: [
+			    {
+			        icon: 'el-icon-lx-home',
+			        index: 'dashboard',
+			        title: '系统首页'
+			    },
+			    {
+			        icon: 'el-icon-lx-cascades',
+			        index: 'table',
+			        title: '订单管理'
+			    },
+			    {
+			        icon: 'el-icon-lx-cascades',
+			        index: 'productTable',
+			        title: '商品表格'
+			    },
+			    {
+			        icon: 'el-icon-lx-cascades',
+			        index: 'userTable',
+			        title: '用户表格'
+			    }
+			]
         };
     },
     computed: {
@@ -95,6 +99,7 @@ export default {
             this.collapse = msg;
             bus.$emit('collapse-content', msg);
         });
+		this.user = JSON.parse(sessionStorage.getItem('ms_username'));
     }
 };
 </script>

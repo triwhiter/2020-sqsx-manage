@@ -58,7 +58,7 @@ export default {
 						if(res.code == 200) {
 							this.$message.success(res.msg);						
 							sessionStorage.setItem('ms_username', JSON.stringify(res.data));
-							this.$router.push('/');
+							this.$router.push('/dashboard');
 						} else {
 							this.$message.error(res.msg);
 						}						
