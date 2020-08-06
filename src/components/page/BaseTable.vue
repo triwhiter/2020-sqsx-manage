@@ -112,7 +112,7 @@
               align="center"
             >
             <template slot-scope="scope">
-              <img :src="beforeImg + scope.row.img_url" width="50" height="50" />
+              <img :src="scope.row.img_url" width="50" height="50" />
             </template>
             </el-table-column>
             <el-table-column

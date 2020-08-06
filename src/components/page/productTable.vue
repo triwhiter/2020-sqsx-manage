@@ -34,7 +34,11 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="productId" label="ID" width="85" align="center"></el-table-column>
-                <el-table-column prop="intro" label="产品名称" ></el-table-column>
+                <el-table-column prop="intro" label="产品名称" width="270">
+					<template slot-scope="scope">
+						<span v-html="scope.row.intro"></span>
+					</template>
+				</el-table-column>
                 <el-table-column prop="price" label="原价">
                     <template slot-scope="scope">{{scope.row.price}}</template>
                 </el-table-column>
@@ -43,16 +47,18 @@
                 </el-table-column>
                 <el-table-column prop="imgUrl" label="封面" align="center">
                     <template slot-scope="scope">
-<!--                        <el-image-->
-<!--                            class="table-td-thumb"-->
-<!--                            :src="beforeImg+scope.row.avatar"-->
-<!--                            :preview-src-list="[scope.row.avatar]"-->
-<!--                        ></el-image>-->
-                        <img :src="beforeImg+scope.row.imgUrl" class="table-td-thumb">
+                       <el-image
+                           class="table-td-thumb"
+                           :src="scope.row.imgUrl[0]"
+						   width="50" height="50"
+                           :preview-src-list="[scope.row.imgUrl[0]]"
+                       ></el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="shopName" label="店名">
-                    <template slot-scope="scope">{{scope.row.shopName}}</template>
+                <el-table-column prop="shopName" label="店名" width="120">
+                    <template slot-scope="scope">
+						<span v-html="scope.row.shopName"></span>
+					</template>
                 </el-table-column>
                 <el-table-column prop="userName" label="销量">
                     <template slot-scope="scope">{{scope.row.saleNum}}</template>
@@ -173,6 +179,7 @@ export default {
                 pageSize: 20
             },
             tableData: [],
+			cid: 0,
             multipleSelection: [],
             delList: [],
             editVisible: false,
@@ -190,37 +197,27 @@ export default {
     methods: {
         // 获取 easy-mock 的模拟数据
         getData() {
-            const _this=this
-            this.$http.get("/products/search/null/"+_this.query.pageIndex+"/"+_this.query.pageSize+"/0")
+            const _this=this;
+			let keyward = 'null';
+			if(this.query.name == '') {keyward = 'null';} else {keyward = this.query.name;}
+            this.$http.get("/products/search/"+keyward+'/'+_this.query.pageIndex+"/"+_this.query.pageSize+'/' + this.cid)
                 .then(response => {
-                    if(response.data){
-                        console.log(response.data);
-                        this.tableData = [];
-                        this.pageTotal= response.data.data.total;
-                        this.tableData = response.data.data.list;
-                    }
-                })
-                .catch(error => {
-                    console.log(error.message);
-                    alert(error.message);
+					let res = response.data;
+					if(res.code == 200) {
+						console.log(response);
+						this.tableData = res.data.list;
+						this.pageTotal = res.data.total;
+						this.$message.success(res.msg);
+					} else {
+						this.$message.error(res.msg);
+					}
                 })
         },
         // 触发搜索按钮
         handleSearch() {
-            const _this=this
-            this.$http.get("/products/search/"+_this.query.name+"/"+_this.query.pageIndex+"/"+_this.query.pageSize+"/0")
-                .then(response => {
-                    if(response.data){
-                        console.log(response);
-                        this.tableData = [];
-                        this.tableData = response.data.data.list;
-                    }
-                })
-                .catch(error => {
-                    console.log(error.message);
-                    alert(error.message);
-                })
-            this.$set(this.query, 'pageIndex', 1);
+			this.query.pageIndex = 1,
+			this.query.pageSize = 10,
+            this.getData();
         },
         // 删除操作
         handleDelete(index, id) {
